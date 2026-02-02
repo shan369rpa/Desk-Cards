@@ -1,83 +1,175 @@
-# Resource & Cost Estimation: MATE Project
+# Resource & Cost Estimation: MATE Project (v2.0)
 
 **Role:** Solution Architect  
 **Date:** 2026-02-02  
-**Input Documents:** `mate_user_stories.md`, `ui_concepts.md`
+**Version:** 2.0 (AI-Assisted Development)
 
 ---
 
 ## 1. Kiến trúc Giải pháp (Solution Architecture)
 
-Để tối ưu chi phí và hiệu năng cho mô hình PWA + Hybrid Learning, kiến trúc đề xuất như sau:
+```mermaid
+flowchart TB
+    subgraph Client["📱 PWA Client"]
+        UI["Next.js + React"]
+        QR["QR Scanner"]
+        REC["WebRTC Recorder"]
+        SW["Service Worker (Offline)"]
+    end
 
-- **Frontend (PWA):** Next.js (React) - Tối ưu SEO, Performance và hỗ trợ Offline mode tốt.
-- **Backend (BaaS):** Supabase (PostgreSQL) hoặc Firebase - Tiết kiệm thời gian dev backend, miễn phí giai đoạn đầu.
-- **AI Engine:**
-  - **STT (Speech-to-Text):** OpenAI Whisper API (Độ chính xác cao) hoặc Web Speech API (Miễn phí, độ chính xác khá).
-  - **Evaluation:** OpenAI GPT-4o-mini (Rẻ, nhanh) để chấm điểm ngữ pháp/phát âm.
-- **Media Storage:** Cloudinary hoặc Supabase Storage (Lưu ảnh/video).
-- **Hosting:** Vercel (Frontend) + Supabase (Backend).
+    subgraph Backend["☁️ Backend (Supabase)"]
+        AUTH["Auth (Email/Phone)"]
+        DB["PostgreSQL"]
+        STORE["Storage (Audio/Video)"]
+    end
 
----
+    subgraph AI["🤖 AI Services"]
+        WSA["Web Speech API (Free)"]
+        WHISPER["OpenAI Whisper (Backup)"]
+        GPT["GPT-4o-mini (Feedback)"]
+    end
 
-## 2. Ước lượng Thời gian & Công sức (Effort Estimation)
+    UI --> AUTH
+    UI --> DB
+    REC --> WSA
+    WSA -.->|Fallback| WHISPER
+    DB --> GPT
+    GPT --> UI
+```
 
-Đơn vị: **Man-Days (MD)** - Công làm việc của 1 kỹ sư trong 1 ngày (8h).
+### Tech Stack
 
-### Chi tiết theo Epic:
-
-| Epic                          | Hạng mục (Features)                                                                                                                            | Độ phức tạp | Frontend (MD) | Backend/AI (MD) | Tổng (MD) |
-| :---------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------- | :---------: | :-----------: | :-------------: | :-------: |
-| **1. Auth & Core Setup**      | Setup Next.js, PWA Config, Tailwind Design System. Đăng nhập (Email/SĐT/Social), Guest Mode logic.                                             |   Medium    |       4       |        2        |   **6**   |
-| **2. Home Dashboard**         | Daily Quest UI, Growth Tree Logic (Gamification State), Navigation.                                                                            |   Medium    |       5       |        1        |   **6**   |
-| **3. Learning Core**          | **QR Scanner** (Floating, optimize performance). <br> **Flashcard Logic** (Flow, Interaction, Animation). <br> **Media Player** (Audio/Video). |    High     |       8       |        1        |   **9**   |
-| **4. AI Features**            | **AI Speaking Feedback:** Integrate Recorder -> API -> Show Result. <br> **Virtual Partner:** Interactive Audio Flow.                          |  Very High  |       6       |        6        |  **12**   |
-| **5. Reports & Gamification** | **Postcard Gen:** Canvas rendering (xuất ảnh). <br> Logic "Tưới cây" tích lũy điểm.                                                            |   Medium    |       4       |        2        |   **6**   |
-| **6. Testing & Polish**       | UI/UX Fine-tuning, PWA Offline Test, Bug fixing.                                                                                               |      -      |       5       |        -        |   **5**   |
-| **Tổng cộng**                 |                                                                                                                                                |             |   **32 MD**   |    **12 MD**    | **44 MD** |
-
-### Lịch trình dự kiến (Timeline):
-
-- **Team:** 1 Frontend Lead (Full-time), 1 Backend/AI Engineer (Part-time/Support).
-- **Tổng thời gian:** ~44 Man-Days.
-- **Thực tế (bao gồm Buffer 20% + Review):** **6 - 8 Tuần (1.5 - 2 Tháng).**
-
----
-
-## 3. Tài nguyên Hệ thống & Chi phí Hạ tầng (Infrastructure Costs)
-
-Dự toán cho **1,000 Active Users/Tháng (MAU)**.
-
-| Hạng mục                | Dịch vụ đề xuất        | Gói (Tier)      | Chi phí ước tính (Tháng) | Ghi chú                                                                                      |
-| :---------------------- | :--------------------- | :-------------- | :----------------------- | :------------------------------------------------------------------------------------------- |
-| **Hosting (FE)**        | Vercel                 | Pro (khi scale) | $20                      | Free cho Hobby project.                                                                      |
-| **Database & Auth**     | Supabase               | Pro             | $25                      | Free tier chịu được ~500MB data.                                                             |
-| **AI Speaking API**     | OpenAI (Whisper + GPT) | Pay-as-you-go   | ~$50 - $100              | Giả sử 1 user học 15p/ngày, dùng AI 5 lần. <br> _Có thể giảm về $0 nếu dùng Web Speech API._ |
-| **Media Storage**       | Cloudinary/AWS S3      | Pay-as-you-go   | $10                      | Lưu video bài tập của user.                                                                  |
-| **Domain**              | Namecheap/Porkbun      | Năm             | ~$1/tháng                | Chi phí mua tên miền .com/.vn                                                                |
-| **Tổng chi phí System** |                        |                 | **~$106 - $156 / tháng** | ~2.5 - 4 triệu VNĐ/tháng vận hành.                                                           |
+| Layer             | Công nghệ                           | Lý do chọn                         |
+| :---------------- | :---------------------------------- | :--------------------------------- |
+| **Frontend**      | Next.js 14 (App Router)             | PWA-ready, SEO, Performance        |
+| **Styling**       | Tailwind CSS + shadcn/ui            | Rapid UI Development               |
+| **Backend**       | Supabase                            | Auth, Database, Storage all-in-one |
+| **AI - Speech**   | Web Speech API → Whisper (fallback) | Free first, accurate when needed   |
+| **AI - Feedback** | OpenAI GPT-4o-mini                  | Cost-effective, fast               |
+| **Hosting**       | Vercel + Supabase Cloud             | Zero DevOps overhead               |
 
 ---
 
-## 4. Chi phí Nhân sự (Development Cost)
+## 2. Ước lượng Thời gian (AI-Assisted Development)
 
-_Lưu ý: Đây là mức giá tham khảo trung bình tại thị trường Việt Nam (Outsourcing)._
+> **Lưu ý:** Với sự hỗ trợ của AI Agents (Claude, Cursor, v1, etc.), năng suất coding tăng **2-3x** so với truyền thống.
 
-1.  **Frontend Developer (Senior):** 1.5 tháng x $2,500 = $3,750
-2.  **Backend/AI Dev (Mid):** 0.5 tháng x $2,000 = $1,000
-3.  **UI/UX Designer:** (Đã có concept, cần design chi tiết) ~ $1,000 (Project based)
-4.  **Project Management & QA:** ~ $1,000
+### Man-Days Breakdown
 
-**=> Tổng chi phí phát triển (CAPEX): ~$6,750 - $8,000 (Khoảng 170 - 200 Triệu VNĐ).**
+| Epic                 | Features                                    | Complexity | Traditional (MD) | AI-Assisted (MD) |
+| :------------------- | :------------------------------------------ | :--------: | :--------------: | :--------------: |
+| **1. Auth & Core**   | PWA setup, Login, Guest Mode                |   Medium   |        6         |      **3**       |
+| **2. Dashboard**     | Daily Quest, Growth Tree, Nav               |   Medium   |        6         |      **3**       |
+| **3. Learning Core** | QR Scanner, Flashcards, Media Player, Timer |    High    |        10        |      **5**       |
+| **4. AI Features**   | AI Speaking, Virtual Partner                | Very High  |        12        |      **7**       |
+| **5. Gamification**  | Postcard Generator, Tree Animation          |   Medium   |        6         |      **3**       |
+| **6. Support**       | Community, Guide, Founder Corner            |    Low     |        3         |      **2**       |
+| **7. Testing**       | QA, PWA Offline, Bug fixes                  |     -      |        5         |      **4**       |
+| **Buffer**           | Unexpected issues (15%)                     |     -      |        -         |      **4**       |
+| **Tổng**             |                                             |            |    **48 MD**     |    **31 MD**     |
+
+### Timeline (Realistic)
+
+| Phase       | Nội dung                        |  Thời gian   |
+| :---------- | :------------------------------ | :----------: |
+| **Phase 0** | Discovery & Content Prep        |   3-5 ngày   |
+| **Phase 1** | Core MVP (Auth + Learning + QR) |    2 tuần    |
+| **Phase 2** | AI Features                     |   1.5 tuần   |
+| **Phase 3** | Gamification + Polish           |    1 tuần    |
+| **Phase 4** | Testing & Launch                |   3-5 ngày   |
+| **Tổng**    |                                 | **5-6 Tuần** |
 
 ---
 
-## 5. Kết luận & Khuyến nghị
+## 3. Chi phí Hạ tầng (Monthly OPEX)
 
-1.  **Giai đoạn 1 (MVP):** Tập trung vào **PWA + Core Learning + Digital Cards**. Sử dụng các dịch vụ Free Tier của Vercel/Supabase.
-2.  **Tối ưu AI:** Đối với tính năng Speaking, nên cân nhắc sử dụng **Web Speech API** (có sẵn trên trình duyệt Chrome/Safari) thay vì gọi API OpenAI cho mọi lượt nói để tiết kiệm $50-$100/tháng. Chỉ dùng OpenAI cho các bài kiểm tra cuối khoá (Final Test) cần độ chính xác cực cao.
-3.  **Lưu trữ:** Video bài làm của học viên nên lưu cục bộ trên máy (Local Storage) hoặc chỉ lưu tạm thời, tránh chi phí Storage phình to không kiểm soát.
+Dự toán cho **1,000 MAU** (Monthly Active Users).
+
+| Hạng mục        | Dịch vụ            | Tier          |    Chi phí/tháng | Ghi chú                |
+| :-------------- | :----------------- | :------------ | ---------------: | :--------------------- |
+| Hosting         | Vercel             | Pro           |              $20 | Free tier đủ cho MVP   |
+| Database + Auth | Supabase           | Pro           |              $25 | Free: 500MB, 50K users |
+| AI (Speaking)   | Web Speech API     | Free          |               $0 | Built-in browser       |
+| AI (Feedback)   | OpenAI GPT-4o-mini | Pay-as-you-go |           $30-50 | ~1000 postcards/tháng  |
+| Storage         | Supabase Storage   | Included      |               $0 | First 1GB free         |
+| Domain          | .com               | Yearly        |              ~$1 |                        |
+| **Tổng OPEX**   |                    |               | **$76-96/tháng** | ~2 triệu VNĐ           |
+
+### Scaling Cost (10,000 MAU)
+
+| Hạng mục       |       Chi phí/tháng |
+| :------------- | ------------------: |
+| Vercel Pro     |                 $20 |
+| Supabase Pro   |                 $25 |
+| AI Feedback    |            $300-500 |
+| Storage (10GB) |                 $25 |
+| **Tổng**       | **~$400-600/tháng** |
 
 ---
 
-_File này được tạo tự động dựa trên yêu cầu của Solution Architect._
+## 4. Chi phí Phát triển (CAPEX)
+
+### Nhân sự (AI-Assisted Model)
+
+| Vai trò                   |   Thời gian   |         Rate |    Chi phí |
+| :------------------------ | :-----------: | -----------: | ---------: |
+| **Fullstack Dev + AI**    |   1.5 tháng   | $2,500/tháng |     $3,750 |
+| **UI/UX Detail**          | Project-based |            - |       $800 |
+| **Content (Audio/Cards)** | Project-based |            - |       $500 |
+| **QA & Testing**          |   0.5 tháng   | $1,000/tháng |       $500 |
+| **Project Management**    |   Part-time   |            - |       $500 |
+| **Tổng CAPEX**            |               |              | **$6,050** |
+
+**=> Tổng chi phí phát triển: ~$6,000 - $7,000 (150 - 175 triệu VNĐ)**
+
+---
+
+## 5. Phân tích Rủi ro (Risk Assessment)
+
+| Rủi ro                                 |  Xác suất  |   Impact   | Mitigation                          |
+| :------------------------------------- | :--------: | :--------: | :---------------------------------- |
+| QR Scanner chậm trên iOS Safari        |    Cao     |    Cao     | Fallback: Nhập mã thủ công          |
+| Web Speech API không hỗ trợ tiếng Việt | Trung bình |    Cao     | Dùng Whisper API                    |
+| Supabase Free Tier limit               |    Cao     | Trung bình | Monitor usage, archive data         |
+| PWA Offline sync conflict              | Trung bình | Trung bình | IndexedDB + conflict resolution     |
+| User adoption thấp                     | Trung bình |    Cao     | A/B test features, collect feedback |
+
+---
+
+## 6. Khuyến nghị MVP (Minimum Viable Product)
+
+### Features PHẢI CÓ (Must-Have)
+
+- [x] Guest Mode + Member Login
+- [x] QR Scanner + Manual Input
+- [x] Flashcard Learning (Vocab/Grammar)
+- [x] Media Player (Audio/Video)
+- [x] AI Speaking Feedback (Traffic Light)
+- [x] Daily Quest Progress
+
+### Features NÊN CÓ (Nice-to-Have)
+
+- [ ] Growth Tree Animation
+- [ ] Postcard Report (có thể đơn giản hoá)
+- [ ] Virtual Partner (Phase 2)
+
+### Features BỎ HOẶC HOÃN
+
+- [ ] Video Recording (Final Station) → Chỉ ghi âm
+- [ ] Improv Challenge → Phase 2
+- [ ] Community Integration → Link external
+
+---
+
+## 7. Maintenance (Post-Launch)
+
+| Hạng mục                   |   Chi phí/tháng |
+| :------------------------- | --------------: |
+| Infrastructure (OPEX)      |          $76-96 |
+| Minor bug fixes (4h/tháng) |            $100 |
+| Monitoring & Support       |             $50 |
+| **Tổng Maintenance**       | **~$250/tháng** |
+
+---
+
+_Document Version: 2.0 | AI-Assisted Development Model_
