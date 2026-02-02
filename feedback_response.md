@@ -52,7 +52,6 @@ Tuần 6: Testing + Launch
 |  1  | **Bộ thẻ mẫu (10-20 thẻ)**      | Danh sách: ID, Loại (Vocab/Grammar/Listening), Nội dung, Link QR | Trước khi bắt đầu |
 |  2  | **File Audio mẫu (5-10 files)** | Cho thẻ Listening và Virtual Partner                             |      Tuần 1       |
 |  3  | **Logo + Brand Guidelines**     | Màu sắc chính xác, font chữ, icon set                            |      Tuần 1       |
-|  4  | **Tài khoản cần thiết**         | GitHub (để share code), Supabase (anh tạo hay em tạo?)           |   Ngày bắt đầu    |
 
 **Câu hỏi ngược lại cho anh:**
 
@@ -84,6 +83,3 @@ Nếu anh đồng ý với hướng đi trên, em sẽ:
 
 **Anh reply confirm để em khởi động nhé!** 🚀
 
----
-
-_Document by: Sơn (Solution Architect + AI-Assisted Developer)_
