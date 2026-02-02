@@ -2,21 +2,6 @@
 
 **Người nhận:** Anh Pan (Product Owner)  
 **Ngày:** 2026-02-02
-
----
-
-## 📌 Ghi nhận Feedback từ Anh Pan
-
-> _"Em nắm rất nhanh idea và triển khai khá sát, khoảng 70% so với ý tưởng ban đầu..."_
-
-Cảm ơn anh đã feedback chi tiết! Em ghi nhận những điểm sau:
-
-| Điểm đánh giá          | Chi tiết                                            |
-| :--------------------- | :-------------------------------------------------- |
-| ✅ Độ bám sát ý tưởng  | ~70% - Còn room để refine                           |
-| ✅ UI Mockups          | Giúp hình dung sản phẩm thực tế                     |
-| ✅ Format User Stories | "As a → I want to → So that → AC" được đánh giá cao |
-
 ---
 
 ## 🎯 Trả lời 3 câu hỏi của Anh Pan
