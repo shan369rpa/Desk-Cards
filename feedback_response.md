@@ -1,6 +1,5 @@
 # Phản hồi Feedback & Đề xuất Tiếp theo
 
-**Người gửi:** Solution Architect (Sơn)  
 **Người nhận:** Anh Pan (Product Owner)  
 **Ngày:** 2026-02-02
 
